@@ -44,7 +44,9 @@ Based on these, it chooses between models like:
 ## 📊 Lets say you uploaded a dataset which should ideally have the best prediction results with RandomForest Regression, then your output will be like this : 
 
 Avg skewness: 0.36 Avg correlation with target: 0.34 Multicollinearity score: 470.07
+
 ✅ Recommended model: RandomForestRegressor
+
 📊 Model Evaluation: R² Score: 0.95 RMSE: 0.58
 
 ## 📁 Sample Datasets
