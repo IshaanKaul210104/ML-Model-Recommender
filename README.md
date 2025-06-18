@@ -1,5 +1,5 @@
 🤖 ML Model Recommender
-This project automatically analyzes any dataset and recommends the most suitable machine learning model (regression, classification, or clustering) based on the dataset’s statistical characteristics — without needing to train all models manually!
+This project automatically analyzes any dataset and recommends the most suitable machine learning model (regression, classification, or clustering) based on the dataset’s statistical characteristics — no need to try every model manually!
 
 🎯 Project Goal
 Instead of blindly trying every algorithm, this tool intelligently analyzes your dataset and recommends the most suitable ML model by examining:
@@ -64,26 +64,38 @@ Choose a built-in dataset or upload your own CSV.
 
 Specify your task type and target column (if supervised).
 
-Run the notebook — get:
+Run the notebook to view:
 
-Model Recommendation ✅
+✅ Recommended model
 
-Evaluation metrics (R², RMSE, Accuracy, Silhouette Score) 📈
+📈 Evaluation metrics (R², RMSE, Accuracy, Silhouette Score)
 
 📁 Sample Outputs
 🧪 Regression Example:
-Avg skewness: 0.36, Avg correlation with target: 0.34, VIF score: 470.07
-✅ Recommended Model: RandomForestRegressor
-R² Score: 0.95, RMSE: 0.58
+yaml
+Copy
+Edit
+Avg skewness: 0.36  
+Avg correlation with target: 0.34  
+VIF score: 470.07
 
+✅ Recommended Model: RandomForestRegressor  
+📊 R² Score: 0.95  
+📉 RMSE: 0.58
 🧪 Classification Example:
-✅ Recommended Model: RandomForestClassifier
-Accuracy: 94%, Precision: 92%, F1-score: 93%
-
+yaml
+Copy
+Edit
+✅ Recommended Model: RandomForestClassifier  
+📊 Accuracy: 94%  
+🎯 Precision: 92%  
+🏷️ F1-score: 93%
 🧪 Clustering Example:
-✅ Recommended Model: KMeans
-Silhouette Score: 0.67
-
+yaml
+Copy
+Edit
+✅ Recommended Model: KMeans  
+📈 Silhouette Score: 0.67
 📦 Tech Stack
 Python
 
@@ -93,26 +105,34 @@ Scikit-learn
 
 XGBoost
 
-Matplotlib / Seaborn (optional for plots)
+Matplotlib / Seaborn (optional for visualizations)
 
 📊 Built-in Datasets (for testing)
 fetch_california_housing()
 
-load_diabetes(), load_iris(), load_breast_cancer()
+load_diabetes()
 
-make_classification(), make_regression(), make_blobs()
+load_iris()
+
+load_breast_cancer()
+
+make_classification()
+
+make_regression()
+
+make_blobs()
 
 make_friedman1()
 
 🔮 Future Work
-Train an actual meta-model using dataset meta-features to replace heuristics.
+Train a proper meta-model using dataset meta-features
 
-Add support for time series models.
+Add support for time series model recommendations
 
-Build a simple web-based interface (Streamlit or Gradio).
+Build a web-based GUI using Streamlit or Gradio
 
-Integrate AutoML benchmarking.
+Benchmark against AutoML solutions
 
 🙋‍♂️ Author
-Made with ❤️ by Ishaan Kaul.
-If you find this project helpful, feel free to ⭐ it and share!
+Made with ❤️ by Ishaan Kaul
+If you like this project, feel free to ⭐ it and share!
