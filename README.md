@@ -1,69 +1,118 @@
-# 🧠 Regression Model Recommender
+🤖 ML Model Recommender
+This project automatically analyzes any dataset and recommends the most suitable machine learning model (regression, classification, or clustering) based on the dataset’s statistical characteristics — without needing to train all models manually!
 
-This project automatically analyzes a regression dataset and **recommends the most suitable machine learning regression model** based on the dataset's statistical characteristics — no need to try every model manually!
+🎯 Project Goal
+Instead of blindly trying every algorithm, this tool intelligently analyzes your dataset and recommends the most suitable ML model by examining:
 
-## 🔍 Project Goal
+🔁 Task Type (Regression, Classification, Clustering)
 
-Instead of training all possible regression models to find the best one, this project aims to intelligently recommend the most suitable model by analyzing:
+📈 Skewness of features
 
-- Skewness of features
-- Correlation with target variable
-- Multicollinearity of input features
+📊 Correlation with target (for supervised tasks)
 
-Based on these, it chooses between models like:
-- Linear Regression
-- Ridge Regression
-- Decision Tree Regressor
-- Random Forest Regressor
-- XGBoost Regressor
+🧮 Multicollinearity (via Variance Inflation Factor)
 
-## 📂 How It Works
+🧠 Heuristic rules for model suitability
 
-1. Upload your dataset (CSV) or use built-in sklearn datasets.
-2. The script performs statistical analysis of the features.
-3. Based on a simple decision heuristic, it recommends a model.
-4. The recommended model is trained and evaluated using R² and RMSE scores.
+🧠 Supported Models
+📌 Regression:
+Linear Regression
 
-## 🛠 Tech Stack
+Ridge Regression
 
-- Python
-- Pandas, NumPy
-- Scikit-learn
-- XGBoost (optional, for additional accuracy)
+Decision Tree Regressor
 
-## 🚀 How to Use
+Random Forest Regressor
 
-1. Clone the repository or open the `Regression_Model_Recommender.ipynb` in Google Colab.
-2. Upload your dataset, or test with built-in datasets like:
-   - `fetch_california_housing()`
-   - `load_diabetes()`
-   - `make_friedman1()`
-3. Enter your target column name when prompted.
-4. View the recommended model and performance metrics.
+XGBoost Regressor
 
-## 📊 Lets say you uploaded a dataset which should ideally have the best prediction results with RandomForest Regression, then your output will be like this : 
+📌 Classification:
+Logistic Regression
 
-Avg skewness: 0.36 Avg correlation with target: 0.34 Multicollinearity score: 470.07
+Decision Tree Classifier
 
-✅ Recommended model: RandomForestRegressor
+Random Forest Classifier
 
-📊 Model Evaluation: R² Score: 0.95 RMSE: 0.58
+XGBoost Classifier
 
-## 📁 Sample Datasets
+📌 Clustering:
+KMeans
 
-Some examples tested:
-- California Housing → Random Forest
-- Diabetes → Ridge
-- Friedman1 → Random Forest
-- Simple Linear Dataset → Linear Regression
+Agglomerative Clustering
 
-## ✅ Future Work
+DBSCAN
 
-- Add a GUI or web-based interface.
-- Train a meta-model using meta-features to predict the best algorithm.
-- Support for classification models.
+⚙️ How It Works
+📂 Upload your dataset (CSV) or choose from built-in sklearn datasets.
 
-## 🙋‍♂️ Author
+🧪 The system performs:
 
-Made with ❤️ by Ishaan Kaul.  
-If you like this project, feel free to ⭐ it and share.
+Statistical analysis of features
+
+Task type detection
+
+Meta-feature extraction
+
+🧠 A heuristic logic block selects the best-suited model.
+
+📊 The recommended model is trained (if applicable) and evaluated.
+
+🚀 How to Use
+Clone this repository or open ML_Model_Recommender.ipynb in Google Colab.
+
+Choose a built-in dataset or upload your own CSV.
+
+Specify your task type and target column (if supervised).
+
+Run the notebook — get:
+
+Model Recommendation ✅
+
+Evaluation metrics (R², RMSE, Accuracy, Silhouette Score) 📈
+
+📁 Sample Outputs
+🧪 Regression Example:
+Avg skewness: 0.36, Avg correlation with target: 0.34, VIF score: 470.07
+✅ Recommended Model: RandomForestRegressor
+R² Score: 0.95, RMSE: 0.58
+
+🧪 Classification Example:
+✅ Recommended Model: RandomForestClassifier
+Accuracy: 94%, Precision: 92%, F1-score: 93%
+
+🧪 Clustering Example:
+✅ Recommended Model: KMeans
+Silhouette Score: 0.67
+
+📦 Tech Stack
+Python
+
+Pandas, NumPy
+
+Scikit-learn
+
+XGBoost
+
+Matplotlib / Seaborn (optional for plots)
+
+📊 Built-in Datasets (for testing)
+fetch_california_housing()
+
+load_diabetes(), load_iris(), load_breast_cancer()
+
+make_classification(), make_regression(), make_blobs()
+
+make_friedman1()
+
+🔮 Future Work
+Train an actual meta-model using dataset meta-features to replace heuristics.
+
+Add support for time series models.
+
+Build a simple web-based interface (Streamlit or Gradio).
+
+Integrate AutoML benchmarking.
+
+🙋‍♂️ Author
+Made with ❤️ by Ishaan Kaul.
+If you find this project helpful, feel free to ⭐ it and share!
