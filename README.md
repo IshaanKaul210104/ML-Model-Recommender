@@ -1,138 +1,122 @@
-🤖 ML Model Recommender
-This project automatically analyzes any dataset and recommends the most suitable machine learning model (regression, classification, or clustering) based on the dataset’s statistical characteristics — no need to try every model manually!
+# 🤖 ML Model Recommender
 
-🎯 Project Goal
+This project automatically analyzes any dataset and **recommends the most suitable machine learning model** (regression, classification, or clustering) based on the dataset’s **statistical characteristics** — no need to try every model manually!
+
+---
+
+## 🎯 Project Goal
+
 Instead of blindly trying every algorithm, this tool intelligently analyzes your dataset and recommends the most suitable ML model by examining:
 
-🔁 Task Type (Regression, Classification, Clustering)
+- 🔁 **Task Type** (Regression, Classification, Clustering)  
+- 📈 **Skewness** of features  
+- 📊 **Correlation** with target (for supervised tasks)  
+- 🧮 **Multicollinearity** (via Variance Inflation Factor)  
+- 🧠 **Heuristic rules** for model suitability  
 
-📈 Skewness of features
+---
 
-📊 Correlation with target (for supervised tasks)
+## 🧠 Supported Models
 
-🧮 Multicollinearity (via Variance Inflation Factor)
+### 📌 Regression:
+- Linear Regression  
+- Ridge Regression  
+- Decision Tree Regressor  
+- Random Forest Regressor  
+- XGBoost Regressor  
 
-🧠 Heuristic rules for model suitability
+### 📌 Classification:
+- Logistic Regression  
+- Decision Tree Classifier  
+- Random Forest Classifier  
+- XGBoost Classifier  
 
-🧠 Supported Models
-📌 Regression:
-Linear Regression
+### 📌 Clustering:
+- KMeans  
+- Agglomerative Clustering  
+- DBSCAN  
 
-Ridge Regression
+---
 
-Decision Tree Regressor
+## ⚙️ How It Works
 
-Random Forest Regressor
+1. 📂 **Upload your dataset** (CSV) or choose from built-in sklearn datasets.  
+2. 🧪 The system performs:
+   - Statistical analysis of features  
+   - Task type detection  
+   - Meta-feature extraction  
+3. 🧠 A heuristic logic block selects the best-suited model.  
+4. 📊 The recommended model is trained (if applicable) and evaluated.  
 
-XGBoost Regressor
+---
 
-📌 Classification:
-Logistic Regression
+## 🚀 How to Use
 
-Decision Tree Classifier
+1. Clone this repository or open `ML_Model_Recommender.ipynb` in **Google Colab**.  
+2. Choose a built-in dataset or upload your own CSV.  
+3. Specify your **task type** and **target column** (if supervised).  
+4. Run the notebook to view:
+   - ✅ Recommended model  
+   - 📈 Evaluation metrics (R², RMSE, Accuracy, Silhouette Score)  
 
-Random Forest Classifier
+---
 
-XGBoost Classifier
+## 📁 Sample Outputs
 
-📌 Clustering:
-KMeans
-
-Agglomerative Clustering
-
-DBSCAN
-
-⚙️ How It Works
-📂 Upload your dataset (CSV) or choose from built-in sklearn datasets.
-
-🧪 The system performs:
-
-Statistical analysis of features
-
-Task type detection
-
-Meta-feature extraction
-
-🧠 A heuristic logic block selects the best-suited model.
-
-📊 The recommended model is trained (if applicable) and evaluated.
-
-🚀 How to Use
-Clone this repository or open ML_Model_Recommender.ipynb in Google Colab.
-
-Choose a built-in dataset or upload your own CSV.
-
-Specify your task type and target column (if supervised).
-
-Run the notebook to view:
-
-✅ Recommended model
-
-📈 Evaluation metrics (R², RMSE, Accuracy, Silhouette Score)
-
-📁 Sample Outputs
-🧪 Regression Example:
-yaml
-Copy
-Edit
-Avg skewness: 0.36  
-Avg correlation with target: 0.34  
+### 🧪 Regression Example:
+Avg skewness: 0.36
+Avg correlation with target: 0.34
 VIF score: 470.07
 
-✅ Recommended Model: RandomForestRegressor  
-📊 R² Score: 0.95  
+✅ Recommended Model: RandomForestRegressor
+📊 R² Score: 0.95
 📉 RMSE: 0.58
-🧪 Classification Example:
-yaml
-Copy
-Edit
-✅ Recommended Model: RandomForestClassifier  
-📊 Accuracy: 94%  
-🎯 Precision: 92%  
+
+### 🧪 Classification Example:
+✅ Recommended Model: RandomForestClassifier
+📊 Accuracy: 94%
+🎯 Precision: 92%
 🏷️ F1-score: 93%
-🧪 Clustering Example:
-yaml
-Copy
-Edit
-✅ Recommended Model: KMeans  
+
+### 🧪 Clustering Example:
+✅ Recommended Model: KMeans
 📈 Silhouette Score: 0.67
-📦 Tech Stack
-Python
 
-Pandas, NumPy
+---
 
-Scikit-learn
+## 📦 Tech Stack
 
-XGBoost
+- Python  
+- Pandas, NumPy  
+- Scikit-learn  
+- XGBoost  
+- Matplotlib / Seaborn (optional for visualizations)  
 
-Matplotlib / Seaborn (optional for visualizations)
+---
 
-📊 Built-in Datasets (for testing)
-fetch_california_housing()
+## 📊 Built-in Datasets (for testing)
 
-load_diabetes()
+- `fetch_california_housing()`  
+- `load_diabetes()`  
+- `load_iris()`  
+- `load_breast_cancer()`  
+- `make_classification()`  
+- `make_regression()`  
+- `make_blobs()`  
+- `make_friedman1()`  
 
-load_iris()
+---
 
-load_breast_cancer()
+## 🔮 Future Work
 
-make_classification()
+- Train a proper **meta-model** using dataset meta-features  
+- Add support for **time series** model recommendations  
+- Build a **web-based GUI** using Streamlit or Gradio  
+- Benchmark against **AutoML** solutions  
 
-make_regression()
+---
 
-make_blobs()
+## 🙋‍♂️ Author
 
-make_friedman1()
-
-🔮 Future Work
-Train a proper meta-model using dataset meta-features
-
-Add support for time series model recommendations
-
-Build a web-based GUI using Streamlit or Gradio
-
-Benchmark against AutoML solutions
-
-🙋‍♂️ Author
-Made with ❤️ by Ishaan Kaul
+Made with ❤️ by **Ishaan Kaul**  
 If you like this project, feel free to ⭐ it and share!
