@@ -6,7 +6,7 @@ This project automatically analyzes any dataset and **recommends the most suitab
 
 ## 🎯 Project Goal
 
-Instead of blindly trying every algorithm, this tool intelligently analyzes your dataset and recommends the most suitable ML model by examining:
+Instead of blindly trying every algorithm, this tool intelligently analyzes your dataset and recommends the most suitable ML model by examining the following:
 
 - 🔁 **Task Type** (Regression, Classification, Clustering)  
 - 📈 **Skewness** of features  
