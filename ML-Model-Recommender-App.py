@@ -1,13 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.datasets import (
     fetch_california_housing, load_diabetes,
     load_iris, load_wine, make_classification, make_friedman1, make_blobs
 )
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error, accuracy_score, silhouette_score
+from sklearn.metrics import r2_score, mean_squared_error, accuracy_score, silhouette_score, confusion_matrix, roc_curve, auc
 from sklearn.linear_model import LinearRegression, Ridge, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.cluster import KMeans, DBSCAN
@@ -93,12 +95,15 @@ data_option = st.sidebar.radio("Choose dataset type:", ("Use built-in", "Upload 
 
 data = None
 
+# --- Upload Option ---
 if data_option == "Upload your own":
     uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
     if uploaded_file:
         data = pd.read_csv(uploaded_file)
-        st.write("Preview of uploaded dataset:")
+        st.write("📂 Preview of uploaded dataset:")
         st.dataframe(data.head())
+
+# --- Built-in Datasets ---
 else:
     if task == 'regression':
         reg_dataset = st.selectbox("Choose a regression dataset:", ["California Housing", "Diabetes", "Friedman1"])
@@ -119,8 +124,10 @@ else:
             data = load_wine(as_frame=True).frame
         elif cls_dataset == "Make Classification":
             try:
-                X, y = make_classification(n_samples=1000, n_features=10, n_informative=6,
-                                           n_redundant=2, n_classes=3, n_clusters_per_class=1, random_state=42)
+                X, y = make_classification(
+                    n_samples=1000, n_features=10, n_informative=6,
+                    n_redundant=2, n_classes=3, n_clusters_per_class=1, random_state=42
+                )
                 data = pd.DataFrame(X, columns=[f"X{i}" for i in range(X.shape[1])])
                 data['target'] = y
             except ValueError as e:
@@ -130,44 +137,50 @@ else:
         X, _ = make_blobs(n_samples=500, n_features=5, centers=3, random_state=42)
         data = pd.DataFrame(X, columns=[f"X{i}" for i in range(X.shape[1])])
 
+# --- If dataset is ready ---
 if data is not None:
-    st.write("\nColumns:", list(data.columns))
+    st.write("📑 **Columns detected:**", list(data.columns))
 
+    # --- Target column selection ---
     if task in ['regression', 'classification']:
-        target_col = st.selectbox("Select target column", options=data.columns)
+        target_col = st.selectbox("🎯 Select target column", options=data.columns)
         y = data[target_col]
         X = data.drop(columns=[target_col])
     else:
         X = data
         y = None
 
+    # --- Preprocessing ---
     X = X.select_dtypes(include=[np.number]).dropna()
     if y is not None:
         y = y.loc[X.index]
 
     st.subheader("🔧 Preprocessing Suggestions:")
     st.write("✅ No missing values detected." if not X.isnull().values.any() else "⚠️ Missing values found.")
-    st.write("✅ All columns are numeric.")
+    st.write("✅ All selected columns are numeric.")
 
     scaler = StandardScaler()
     X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
 
+    # --- Meta Features ---
     meta = calculate_meta_features(X_scaled, y, task)
-
     st.subheader("📊 Meta-Features Summary:")
-    st.write("Avg skewness:", meta['avg_skewness'])
-    st.write("Avg correlation with target:", meta['avg_correlation_with_target'])
-    st.write("Multicollinearity score:", meta['multicollinearity_score'])
+    st.json(meta)   # cleaner JSON-style output
 
+    # --- Recommendation ---
     model, reason = recommend_model(meta, task)
-    st.subheader(f"✅ Recommended model: {model.__class__.__name__}")
+    st.subheader(f"✅ Recommended model: `{model.__class__.__name__}`")
     st.info(f"📘 Reason: {reason}")
 
+    # --- Train/Eval recommended ---
+    st.subheader("📈 Recommended Model Performance")
     rec_result = train_and_evaluate(model, X_scaled, y, task)
 
+    # --- Feedback Log ---
     if 'feedback_log' not in st.session_state:
         st.session_state.feedback_log = []
 
+    # --- Override Option ---
     override = st.radio("❓ Would you like to try a different model instead?", ("no", "yes"))
 
     if override == "yes":
@@ -195,57 +208,50 @@ if data is not None:
         st.write(f"🔁 **Evaluating user-chosen model:** `{selected_model_name}`")
         user_result = train_and_evaluate(chosen_model, X_scaled, y, task)
 
-        log_entry = {
-            "task": task,
-            "user_model": selected_model_name,
-            "recommended_model": model.__class__.__name__,
-            "meta_skew": meta['avg_skewness'],
-            "meta_corr": meta['avg_correlation_with_target'],
-            "meta_vif": meta['multicollinearity_score']
-        }
-        st.session_state.feedback_log.append(log_entry)
-
-        # --- Visual Comparison ---
-        st.subheader("📊 Model Comparison")
+        # --- Comparison ---
+        st.subheader("📊 Model Comparison (Recommended vs User-Selected)")
         if task == "regression":
             df_comp = pd.DataFrame({
                 "Model": [rec_result["model"], user_result["model"]],
                 "R² Score": [rec_result["R2"], user_result["R2"]],
                 "MSE (Lower is better)": [rec_result["MSE"], user_result["MSE"]]
             })
-            st.dataframe(df_comp.set_index("Model"))
-            st.bar_chart(df_comp.set_index("Model")[["R² Score"]])
-
         elif task == "classification":
             df_comp = pd.DataFrame({
                 "Model": [rec_result["model"], user_result["model"]],
                 "Accuracy": [rec_result["Accuracy"], user_result["Accuracy"]]
             })
-            st.dataframe(df_comp.set_index("Model"))
-            st.bar_chart(df_comp.set_index("Model"))
-
         elif task == "clustering":
             df_comp = pd.DataFrame({
                 "Model": [rec_result["model"], user_result["model"]],
                 "Silhouette Score": [rec_result["Silhouette Score"], user_result["Silhouette Score"]]
             })
-            st.dataframe(df_comp.set_index("Model"))
-            st.bar_chart(df_comp.set_index("Model"))
+
+        st.dataframe(df_comp.set_index("Model"))
+        st.bar_chart(df_comp.set_index("Model"))
+
+        # --- Logging ---
+        log_entry = {
+            "task": task,
+            "user_model": selected_model_name,
+            "recommended_model": model.__class__.__name__,
+            **meta
+        }
+        st.session_state.feedback_log.append(log_entry)
 
     else:
         log_entry = {
             "task": task,
             "user_model": model.__class__.__name__,
             "recommended_model": model.__class__.__name__,
-            "meta_skew": meta['avg_skewness'],
-            "meta_corr": meta['avg_correlation_with_target'],
-            "meta_vif": meta['multicollinearity_score']
+            **meta
         }
         st.session_state.feedback_log.append(log_entry)
 
+    # --- Feedback Log Table ---
     if len(st.session_state.feedback_log) > 0:
         df_log = pd.DataFrame(st.session_state.feedback_log)
-        st.subheader("📝 Feedback Log")
+        st.subheader("📝 Feedback Log (Current Session)")
         st.dataframe(df_log)
 
         csv = df_log.to_csv(index=False).encode('utf-8')
