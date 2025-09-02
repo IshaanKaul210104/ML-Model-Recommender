@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import altair as alt
+import sqlite3
 from sklearn.datasets import (
     fetch_california_housing, load_diabetes,
     load_iris, load_wine, make_classification, make_friedman1, make_blobs
@@ -16,6 +17,40 @@ from sklearn.cluster import KMeans, DBSCAN
 from scipy.stats import skew
 import warnings
 warnings.filterwarnings('ignore')
+
+# --- Setup database (runs once) ---
+def init_db():
+    conn = sqlite3.connect("feedback_logs.db")
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            task TEXT,
+            user_model TEXT,
+            recommended_model TEXT,
+            avg_skewness REAL,
+            avg_correlation_with_target REAL,
+            multicollinearity_score REAL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+# Call this once at start
+init_db()
+
+# --- Save a log entry to DB ---
+def save_log(log_entry):
+    conn = sqlite3.connect("feedback_logs.db")
+    pd.DataFrame([log_entry]).to_sql("logs", conn, if_exists="append", index=False)
+    conn.close()
+
+# --- Load logs ---
+def load_logs():
+    conn = sqlite3.connect("feedback_logs.db")
+    df = pd.read_sql("SELECT * FROM logs", conn)
+    conn.close()
+    return df
 
 st.title("🔍 ML Model Recommender")
 
@@ -176,10 +211,6 @@ if data is not None:
     st.subheader("📈 Recommended Model Performance")
     rec_result = train_and_evaluate(model, X_scaled, y, task)
 
-    # --- Feedback Log ---
-    if 'feedback_log' not in st.session_state:
-        st.session_state.feedback_log = []
-
     # --- Override Option ---
     override = st.radio("❓ Would you like to try a different model instead?", ("no", "yes"))
 
@@ -228,7 +259,16 @@ if data is not None:
             })
 
         st.dataframe(df_comp.set_index("Model"))
-        st.bar_chart(df_comp.set_index("Model"))
+        df_comp_melted = df_comp.melt("Model", var_name="Metric", value_name="Score")
+
+        chart = alt.Chart(df_comp_melted).mark_bar().encode(
+            x=alt.X('Model:N', title="Models"),
+            y=alt.Y('Score:Q', title="Score"),
+            color='Metric:N',
+            column='Metric:N'
+        ).properties(width=50, height=300)
+
+        st.altair_chart(chart, use_container_width=True)
 
         # --- Logging ---
         log_entry = {
@@ -237,7 +277,7 @@ if data is not None:
             "recommended_model": model.__class__.__name__,
             **meta
         }
-        st.session_state.feedback_log.append(log_entry)
+        save_log(log_entry)
 
     else:
         log_entry = {
@@ -246,12 +286,12 @@ if data is not None:
             "recommended_model": model.__class__.__name__,
             **meta
         }
-        st.session_state.feedback_log.append(log_entry)
+        save_log(log_entry)
 
-    # --- Feedback Log Table ---
-    if len(st.session_state.feedback_log) > 0:
-        df_log = pd.DataFrame(st.session_state.feedback_log)
-        st.subheader("📝 Feedback Log (Current Session)")
+    # --- Show All Logs (persistent across sessions) ---
+    df_log = load_logs()
+    if not df_log.empty:
+        st.subheader("📝 Feedback Log (All Sessions, from DB)")
         st.dataframe(df_log)
 
         csv = df_log.to_csv(index=False).encode('utf-8')
